@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charles &amp; Justine — Wedding Invitation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Beau+Rivage&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#3E3A32; --ink-soft:#726b5c; --paper:#FFFDF9;
+    --dusty:#7E97AC; --dusty-deep:#4F6478; --dusty-pale:#DCE5EB;
+    --sage:#93A378; --sage-deep:#5F6F45; --sage-pale:#E3E8D6;
+    --tint-dusty:#E3EAF0; --tint-sage:#E8ECDC;
+    --midnight-1:#1B2A44; --midnight-2:#0A1220;
+    --gold:#D4AF37; --gold-light:#F3DFA0; --gold-deep:#8B6B1F;
+    --hair:rgba(62,58,50,0.16);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh; font-family:'EB Garamond', Georgia, serif; color:var(--ink);
+    background:linear-gradient(160deg, var(--tint-dusty) 0%, var(--tint-sage) 100%);
+    display:flex; align-items:center; justify-content:center; padding:32px 16px;
+  }
+  .card{
+    max-width:520px; width:100%; background:var(--paper); border-radius:18px;
+    padding:44px 30px 38px; text-align:center;
+    box-shadow:0 24px 60px -28px rgba(27,42,68,0.35);
+    border:1px solid var(--hair);
+  }
+  .eyebrow{
+    font-family:'Jost', sans-serif; letter-spacing:0.28em; text-transform:uppercase;
+    font-size:12px; color:var(--dusty-deep); margin:0 0 10px;
+  }
+  h1{
+    font-family:'Beau Rivage', cursive; font-weight:400; font-size:clamp(40px,10vw,58px);
+    color:var(--midnight-1); margin:0 0 6px; line-height:1.15;
+  }
+  .date{
+    font-family:'Cormorant Garamond', serif; font-size:19px; color:var(--ink-soft);
+    margin:0 0 28px;
+  }
+  .divider{
+    width:64px; height:2px; margin:0 auto 28px; border-radius:2px;
+    background:linear-gradient(90deg, var(--sage), var(--gold), var(--dusty));
+  }
+  .instructions{
+    font-family:'Jost', sans-serif; font-size:14px; color:var(--ink-soft);
+    margin:0 0 22px; line-height:1.6;
+  }
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(78px,1fr)); gap:10px;
+    margin-bottom:8px;
+  }
+  .seat-link{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:2px; padding:14px 6px; border-radius:12px; text-decoration:none;
+    background:var(--tint-sage); border:1px solid var(--hair); color:var(--midnight-1);
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+    font-family:'Jost', sans-serif;
+  }
+  .seat-link:nth-child(even){ background:var(--tint-dusty); }
+  .seat-link:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 24px -14px rgba(27,42,68,0.4);
+    background:var(--gold-light);
+  }
+  .seat-num{ font-size:22px; font-weight:600; color:var(--midnight-1); }
+  .seat-label{ font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft); }
+  .foot{
+    margin-top:30px; font-family:'Jost', sans-serif; font-size:12px; color:var(--ink-soft);
+    letter-spacing:0.04em;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <p class="eyebrow">The Wedding of</p>
+    <h1>Charles &amp; Justine</h1>
+    <p class="date">October 17, 2026 &middot; Estancia, Iloilo</p>
+    <div class="divider"></div>
+    <p class="instructions">Please open the invitation matching the number of seats reserved for you, as noted on your message from us.</p>
+    <div class="grid">
+      <a class="seat-link" href="1/"><span class="seat-num">1</span><span class="seat-label">Seat</span></a>
+      <a class="seat-link" href="2/"><span class="seat-num">2</span><span class="seat-label">Seats</span></a>
+      <a class="seat-link" href="3/"><span class="seat-num">3</span><span class="seat-label">Seats</span></a>
+      <a class="seat-link" href="4/"><span class="seat-num">4</span><span class="seat-label">Seats</span></a>
+      <a class="seat-link" href="5/"><span class="seat-num">5</span><span class="seat-label">Seats</span></a>
+      <a class="seat-link" href="6/"><span class="seat-num">6</span><span class="seat-label">Seats</span></a>
+      <a class="seat-link" href="7/"><span class="seat-num">7</span><span class="seat-label">Seats</span></a>
+    </div>
+    <p class="foot">#JUSTINEfoundherprinceCHARLES</p>
+  </div>
+</body>
+</html>
