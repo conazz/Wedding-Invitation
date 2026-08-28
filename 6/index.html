@@ -124,7 +124,30 @@
     transform-style:preserve-3d;
     animation: envelopeRock 7s ease-in-out infinite;
   }
-  .opening .stage{ animation-play-state:paused; }
+  .opening .stage, .glow .stage{ animation-play-state:paused; }
+
+  /* a bloom that escapes the envelope's own clipped edges, radiating into the dark cover */
+  .seal-glow-outer{
+    position:absolute;
+    top:42%; left:50%;
+    width:120px; height:120px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(243,223,160,0.9) 0%, rgba(212,175,55,0.5) 40%, rgba(212,175,55,0) 72%);
+    transform:translate(-50%,-50%) scale(0.4);
+    opacity:0;
+    pointer-events:none;
+    z-index:8;
+    filter:blur(1px);
+  }
+  #cover.glow .seal-glow-outer{ animation: sealGlowOuterPulse 1.05s ease-out 1 forwards; }
+  @keyframes sealGlowOuterPulse{
+    0%{opacity:0; transform:translate(-50%,-50%) scale(0.4);}
+    20%{opacity:0.9; transform:translate(-50%,-50%) scale(1);}
+    100%{opacity:0; transform:translate(-50%,-50%) scale(3.6);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .seal-glow-outer{ display:none; }
+  }
   @keyframes envelopeRock{
     0%,100%{ transform: rotateY(-6deg) rotateX(2deg); }
     50%{ transform: rotateY(6deg) rotateX(-1.5deg); }
@@ -192,8 +215,30 @@
     animation: breathe 3.2s ease-in-out infinite;
     transition: transform .8s ease, opacity .8s ease;
   }
-  .seal svg{width:100%; height:100%; display:block;}
+  .seal svg{width:100%; height:100%; display:block; position:relative;}
   .opening .seal{transform:scale(0.7) rotate(-12deg); opacity:0;}
+
+  /* the bright core of the glow, blooming from directly behind the wax seal */
+  .seal-glow-inner{
+    position:absolute;
+    top:50%; left:50%;
+    width:100%; height:100%;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(243,223,160,0.7) 45%, rgba(212,175,55,0) 75%);
+    transform:translate(-50%,-50%) scale(0.3);
+    opacity:0;
+    pointer-events:none;
+    z-index:-1;
+  }
+  #cover.glow .seal-glow-inner{ animation: sealGlowInnerPulse 0.9s ease-out 1 forwards; }
+  @keyframes sealGlowInnerPulse{
+    0%{opacity:0; transform:translate(-50%,-50%) scale(0.3);}
+    25%{opacity:1; transform:translate(-50%,-50%) scale(1.4);}
+    100%{opacity:0.15; transform:translate(-50%,-50%) scale(2.2);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .seal-glow-inner{ display:none; }
+  }
 
   @keyframes breathe{
     0%,100%{transform:scale(1);}
@@ -581,6 +626,7 @@
 <!-- COVER : TAP TO OPEN -->
 <!-- ============================================================ -->
 <div id="cover" role="button" tabindex="0" aria-label="Tap to open your invitation">
+  <div class="seal-glow-outer" aria-hidden="true"></div>
   <div class="stage">
     <div class="envelope-card card-slide">
       <div class="pocket left"></div>
@@ -609,6 +655,7 @@
       </svg>
 
       <div class="seal">
+        <div class="seal-glow-inner"></div>
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <radialGradient id="sealGrad" cx="35%" cy="26%" r="80%">
@@ -1038,58 +1085,66 @@
   var QUOTE_TEXT = "When destiny quietly wrote two names into one story, love did the rest.";
 
   function openInvite(){
-    if (cover.classList.contains('opening')) return;
-    cover.classList.add('opening');
+    if (cover.classList.contains('opening') || cover.classList.contains('glow')) return;
 
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // start the music on this same tap/keypress so mobile browsers allow it
-    if(bgMusic){
-      try{
-        bgMusic.currentTime = 0;
-        var playPromise = bgMusic.play();
-        if(playPromise && playPromise.catch){ playPromise.catch(function(){ /* autoplay blocked — guest can use the toggle */ }); }
-      }catch(err){ /* ignore */ }
-      if(musicToggle) musicToggle.classList.add('visible');
-    }
-
-    // Phase 1 — let the envelope finish its slow, full open before anything else happens
-    var envelopeMs = reduced ? 300 : 2400;
+    // Phase 0 — a gold glow blooms from the wax seal and radiates outward, THEN the envelope opens
+    cover.classList.add('glow');
+    var glowMs = reduced ? 150 : 1000;
 
     setTimeout(function(){
-      // Phase 2 — a light flash blooms in and settles into a soft glow behind the quote
-      if(quoteOverlay) quoteOverlay.classList.add('show');
-      if(flashLayer){
-        flashLayer.classList.remove('flashing');
-        flashLayer.classList.remove('flash-static');
-        if(reduced){
-          flashLayer.classList.add('flash-static');
-        } else {
-          void flashLayer.offsetWidth; // restart the animation cleanly
-          flashLayer.classList.add('flashing');
-        }
-      }
+      cover.classList.remove('glow');
+      cover.classList.add('opening');
 
-      var settleMs = reduced ? 100 : 550;
+      // Phase 1 — let the envelope finish its slow, full open before anything else happens
+      var envelopeMs = reduced ? 300 : 2400;
+
       setTimeout(function(){
-        // Phase 3 — the quote types itself out, then holds so it can be read
-        if(reduced || !quoteTypedEl){
-          if(quoteTypedEl) quoteTypedEl.textContent = QUOTE_TEXT;
-          finishTyping(reduced);
-        } else {
-          var i = 0;
-          quoteTypedEl.textContent = '';
-          var typer = setInterval(function(){
-            i++;
-            quoteTypedEl.textContent = QUOTE_TEXT.slice(0, i);
-            if(i >= QUOTE_TEXT.length){
-              clearInterval(typer);
-              finishTyping(reduced);
-            }
-          }, 42);
+        // Phase 2 — a light flash blooms in and settles into a soft glow behind the quote
+        if(quoteOverlay) quoteOverlay.classList.add('show');
+        if(flashLayer){
+          flashLayer.classList.remove('flashing');
+          flashLayer.classList.remove('flash-static');
+          if(reduced){
+            flashLayer.classList.add('flash-static');
+          } else {
+            void flashLayer.offsetWidth; // restart the animation cleanly
+            flashLayer.classList.add('flashing');
+          }
         }
-      }, settleMs);
-    }, envelopeMs);
+
+        var settleMs = reduced ? 100 : 550;
+        setTimeout(function(){
+          // start the music right as the typewriter begins, not at the initial tap
+          if(bgMusic){
+            try{
+              bgMusic.currentTime = 0;
+              var playPromise = bgMusic.play();
+              if(playPromise && playPromise.catch){ playPromise.catch(function(){ /* autoplay blocked — guest can use the toggle */ }); }
+            }catch(err){ /* ignore */ }
+            if(musicToggle) musicToggle.classList.add('visible');
+          }
+
+          // Phase 3 — the quote types itself out, then holds so it can be read
+          if(reduced || !quoteTypedEl){
+            if(quoteTypedEl) quoteTypedEl.textContent = QUOTE_TEXT;
+            finishTyping(reduced);
+          } else {
+            var i = 0;
+            quoteTypedEl.textContent = '';
+            var typer = setInterval(function(){
+              i++;
+              quoteTypedEl.textContent = QUOTE_TEXT.slice(0, i);
+              if(i >= QUOTE_TEXT.length){
+                clearInterval(typer);
+                finishTyping(reduced);
+              }
+            }, 42);
+          }
+        }, settleMs);
+      }, envelopeMs);
+    }, glowMs);
 
     function finishTyping(reduced){
       if(typeCursor) typeCursor.classList.add('done');
