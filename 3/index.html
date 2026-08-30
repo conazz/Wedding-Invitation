@@ -210,8 +210,23 @@
     100%{ fill:#FFF4C2; filter:drop-shadow(0 0 5px rgba(255,232,140,0.95)) drop-shadow(0 0 14px rgba(255,205,60,0.85)); }
   }
 
+  /* the wax seal's outer perimeter glows in sync with the C&J monogram */
+  #sealOuterRing{
+    transition: stroke 0.5s ease;
+    filter: drop-shadow(0 0 0 rgba(255,224,102,0));
+  }
+  #cover.glow #sealOuterRing{
+    animation: sealRingGlow 2s ease-in-out 1 forwards;
+  }
+  @keyframes sealRingGlow{
+    0%{ stroke:#6B4F17; stroke-width:1.5; filter:drop-shadow(0 0 0 rgba(255,224,102,0)); }
+    20%{ stroke:#FFF4C2; stroke-width:2.4; filter:drop-shadow(0 0 5px rgba(255,232,140,0.95)) drop-shadow(0 0 14px rgba(255,205,60,0.85)); }
+    100%{ stroke:#FFF4C2; stroke-width:2.4; filter:drop-shadow(0 0 5px rgba(255,232,140,0.95)) drop-shadow(0 0 14px rgba(255,205,60,0.85)); }
+  }
+
   @media (prefers-reduced-motion: reduce){
     #cover.glow #sealMonogram{ animation:none; }
+    #cover.glow #sealOuterRing{ animation:none; }
   }
 
   @keyframes breathe{
@@ -636,7 +651,7 @@
               <stop offset="100%" stop-color="#8B6B1F"/>
             </radialGradient>
           </defs>
-          <circle cx="50" cy="50" r="45" fill="url(#sealGrad)" stroke="#6B4F17" stroke-width="1.5"/>
+          <circle id="sealOuterRing" cx="50" cy="50" r="45" fill="url(#sealGrad)" stroke="#6B4F17" stroke-width="1.5"/>
           <circle cx="50" cy="50" r="39" fill="none" stroke="#FCEFC0" stroke-width="0.6" opacity="0.55"/>
           <circle cx="50" cy="50" r="43.5" fill="none" stroke="#6B4F17" stroke-width="1.1" stroke-dasharray="1.6 2.6" opacity="0.55"/>
           <!-- a sprig of rosemary pressed into the wax, wreathing the monogram -->
